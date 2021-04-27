@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const https= require('https')
+const http = require('http')
 const path = require('path')
 const fs = require('fs');
 const options = {
@@ -8,7 +8,7 @@ const options = {
 	cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))
 };
 
-const server = https.createServer(options, app)
+const server = http.createServer(app)
 const { nanoid } = require('nanoid')
 
 
@@ -22,7 +22,7 @@ let partners = new Map();
 
 const io = require("socket.io")(server, {
     cors: {
-	    origins: ["https://dbelmo2.github.io/chat-app/", "http://localhost:3000"],
+	    origins: ["https://dbelmo2.github.io/chat-app/","http://the-lounge.tech" , "http://localhost:3000"],
         methods: ['GET', 'POST']
     }
 })
