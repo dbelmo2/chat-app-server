@@ -1,19 +1,14 @@
+const express = require('express')
+const app = express()
+const https= require('https')
+const path = require('path')
+const fs = require('fs');
+const options = {
+	key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
+	cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))
+};
 
-"use strict";
-
-//require("greenlock-express")
-require("greenlock-express")
-    .init({
-        packageRoot: __dirname,
-        configDir: "./greenlock.d",
-
-        maintainerEmail: "danny.belmonte4@gmail.com",
-        cluster: false
-    })
-    .ready(httpsWorker);
-
-
-function httpsWorker(glx) {
+const server = https.createServer(options, app)
 const { nanoid } = require('nanoid')
 
 
@@ -24,7 +19,7 @@ let sessions = new Map();
 // maps a clients socket to their partners socket
 let partners = new Map();
 
-var server = glx.httpsServer();
+
 const io = require("socket.io")(server, {
     cors: {
 	    origins: ["https://dbelmo2.github.io/chat-app/", "http://localhost:3000"],
@@ -93,9 +88,4 @@ io.on('connection', (socket) => {
     })
 });
 
-    // servers a node app that proxies requests to a localhost
-    glx.serveApp(function(req, res) {
-        res.setHeader("Content-Type", "text/html; charset=utf-8");
-        res.end("Hello, World!\n\n💚 🔒.js");
-    });
-}
+server.listen(8443, () => console.log("Server running on port 8443..."))
